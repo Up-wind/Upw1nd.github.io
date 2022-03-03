@@ -1,0 +1,372 @@
+---
+title: CTFd平台部署指南（CTFd+CTFd-Whale）
+date: 2021-05-28
+tags: [CTFd]
+description: SSSCTF平台部署，记录下CTFd平台的部署过程。
+---
+
+## 0x00 前言
+
+### 一、参考资料
+
+[(手把手教你如何建立一个支持ctf动态独立靶机的靶场（ctfd+ctfd-whale）_fjh1997的博客-CSDN博客](https://blog.csdn.net/fjh1997/article/details/100850756)
+
+[CTFd-Whale 推荐部署实践 – glzjin](https://www.zhaoj.in/read-6333.html)
+
+[BUUCTF 题目贡献指南 – glzjin](https://www.zhaoj.in/read-6259.html)
+
+### 二、准备阶段
+
+首先，服务器中需要已经安装 docker 和 docker-compose，
+
+docker 安装可以参照官方文档：[Install Docker Engine on Debian | Docker Documentation](https://docs.docker.com/engine/install/debian/)
+
+docker-compose 安装直接 `sudo apt install docker-compose` 即可。
+
+### 三、技术原理
+
+![IMG_0441.jpg](../assets/2021-05-28-CTFd/IMG_0441.jpg)
+
+主要技术：frp(fast reverse proxy)，使 docker 容器中的内部网络穿透到外部网络中。
+
+Frps服务：运行在服务器上的服务，用于将 frpc 的流量向外转发。
+
+Frpc容器：与靶机容器同处在一个 docker 网络下，用于将靶机的流量发送到 frps
+
+CTFd-Whale：作为 CTFd 的一个插件，它的作用是调用 docker 的接口生成独立的靶机容器，同时控制 frpc 接口转发靶机端口。
+
+## 0x01 安装步骤
+
+### 一、安装启动frp服务
+
+#### 1. 下载安装frps
+
+```bash
+cd
+wget https://github.com/fatedier/frp/releases/download/v0.36.2/frp_0.36.2_linux_amd64.tar.gz
+tar -zxvf frp_0.36.2_linux_amd64.tar.gz
+cd frp_0.36.2_linux_amd64
+sudo cp systemd/* /etc/systemd/system/
+sudo mkdir /etc/frp
+sudo cp frpc.ini  frps.ini /etc/frp/
+sudo cp frpc  frps /usr/bin/
+sudo chmod a+x /usr/bin/frpc /usr/bin/frps
+sudo systemctl enable frps
+```
+
+#### 2. 配置frps.ini
+
+```bash
+sudo vim /etc/frp/frps.ini
+```
+
+```
+#frps.ini
+[common]
+bind_port = 7897
+bind_addr = 0.0.0.0
+token = thisistoken
+# vhost_http_port = 80 #如果要配置http动态域名则需要这个。80端口开启需要systemd使用root权限启用frp，在这里不需要
+```
+
+#### 3. 启动frps服务
+
+```bash
+sudo systemctl start frps
+```
+
+#### 4. 创建docker网络并启动frpc容器
+
+这里用到的是赵师傅写的 frpc 镜像 `glzjin/frp`
+
+```bash
+docker network create ctfd_frp-containers
+docker run -d -v ~/frp_0.36.2_linux_amd64/frpc.ini:/etc/frp/frpc.ini --network="ctfd_frp-containers" --restart=always "glzjin/frp"
+```
+
+创建网络 frpcadmin 用于 ctfd 容器（ctfd-whale）和 frpc 容器通信
+
+```bash
+docker network create frpcadmin
+docker network connect frpcadmin <frpc容器名或者ID>
+```
+
+将frpc和ctfd容器连接到网络frpcadmin，需要等到容器创建好之后再连接。
+
+#### 5. 配置frpc.ini
+
+查看frpcadmin网络的连接情况并记录frpc容器的网络IP
+
+```bash
+docker network inspect frpcadmin
+```
+
+![image-20210528201928580.png](../assets/2021-05-28-CTFd/image-20210528201928580.png)
+
+编辑 `frpc.ini`
+
+```
+vim ~/frp_0.36.2_linux_amd64/frpc.ini
+```
+
+```
+#frpc.ini，只需修改common段
+[common]
+server_addr = 172.17.0.1 #这里填写服务器ip addr之后docker0的ip地址
+server_port = 7897 #这里需与前面frps.ini的bind_port匹配
+token = thisistoken
+admin_addr = 172.27.0.2 #这里填写frpc容器在frpcadmin网络里的ip地址，后续还有用
+admin_port = 7400
+log_file = ./frpc.log
+```
+
+编辑完成后重启 frpc 容器
+
+```bash
+docker restart <frpc容器的ID>
+```
+
+### 二、下载安装CTFd和CTFd-Whale
+
+#### A. 下载已经完成修改的CTFd-SSSCTF
+
+```bash
+git clone https://github.com/Up-wind/SSSCTF.git
+#此版本已经修改完下列文件，平台端口为8001，CSS已经设置完毕。
+```
+
+#### B. 下载原版CTFd和CTFd-Whale
+
+##### 1. 下载CTFd和CTFd-Whale
+
+```bash
+git clone https://github.com/CTFd/CTFd.git
+cd CTFd/
+git reset 6c5c63d667a17aec159c8e26ea53dccfbc4d0fa3 --hard
+#回滚到当前教程适合的版本
+cd CTFd/plugins #打开CTFd插件目录
+git clone https://github.com/glzjin/CTFd-Whale.git ctfd-whale
+#确保插件文件夹小写
+cd ctfd-whale
+git reset 5b32f457e9f56ee9b2b29495f4b3b118be3c57bd --hard
+#回滚到当前教程适合的版本
+cd ../../.. #返回CTFd主目录
+```
+
+##### 2. 编辑docker-compose.yml
+
+```bash
+vim docker-compose.yml
+```
+
+```yaml
+#docker-compose.yml
+version: '2.2'
+
+services:
+	ctfd:
+		build: .
+		user: root
+		restart: always
+		ports:
+			- "8001:8000" #服务器端口:容器内部端口
+		environment:
+			- UPLOAD_FOLDER=/var/uploads
+			- DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
+			- REDIS_URL=redis://cache:6379
+			- WORKERS=1
+			- LOG_FOLDER=/var/log/CTFd
+			- ACCESS_LOG=-
+			- ERROR_LOG=-
+		volumes:
+			- .data/CTFd/logs:/var/log/CTFd
+			- .data/CTFd/uploads:/var/uploads
+			- .:/opt/CTFd:ro
+			- /var/run/docker.sock:/var/run/docker.sock #必须添加这一句，作为docker启动的接口
+		depends_on:
+			- db
+		networks:
+			default:
+			internal:
+
+	db:
+		image: mariadb:10.4.12 #修改为10.4.12
+		restart: always
+		environment:
+			- MYSQL_ROOT_PASSWORD=ctfd
+			- MYSQL_USER=ctfd
+			- MYSQL_PASSWORD=ctfd
+			- MYSQL_DATABASE=ctfd
+		volumes:
+			- .data/mysql:/var/lib/mysql
+		networks:
+			internal:
+		# This command is required to set important mariadb defaults
+		command: [mysqld, --character-set-server=utf8mb4, --collationserver=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+
+	cache:
+		image: redis:4
+		restart: always
+		volumes:
+			- .data/redis:/data
+		networks:
+			internal:
+
+networks:
+	default:
+		external:
+			name: frpcadmin #将CTFd添加到docker的frpc网络中
+	internal:
+		internal: true
+
+```
+
+##### 3. 修改Dockerfile换源
+
+将容器的源换为国内的阿里源和豆瓣源，提高下载速度。
+
+```bash
+vim Dockerfile
+```
+
+```dockerfile
+#Dockerfile
+FROM python:2.7-alpine
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories &&\
+    apk update && \
+    apk add python python-dev linux-headers libffi-dev gcc make musl-dev py-pip
+mysql-client git openssl-dev g++
+RUN adduser -D -u 1001 -s /bin/bash ctfd
+
+WORKDIR /opt/CTFd
+RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
+RUN pip config set global.index-url https://pypi.doubanio.com/simple
+RUN pip config set install.trusted-host pypi.doubanio.com
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt -i https://pypi.doubanio.com/simple
+
+COPY . /opt/CTFd
+
+RUN for d in CTFd/plugins/*; do \
+      if [ -f "$d/requirements.txt" ]; then \
+        pip install -r $d/requirements.txt -i https://pypi.doubanio.com/simple; \
+			fi; \
+		done;
+
+RUN chmod +x /opt/CTFd/docker-entrypoint.sh
+RUN chown -R 1001:1001 /opt/CTFd
+RUN chown -R 1001:1001 /var/log/CTFd /var/uploads
+
+USER 1001
+EXPOSE 8000
+ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
+```
+
+镜像加速可参照：[官方镜像加速 - 容器镜像服务 ACR - 阿里云 (aliyun.com)](https://help.aliyun.com/document_detail/60750.html)
+
+##### 4. 修改reqiurements.txt
+
+由于网络上的教程年代久远，在 `docker-compose build` 的时候遇到的问题，大多数是因为依赖的包的版本太新导致的，所以我们先在 `reqiurements.txt` 里进行修改。
+
+```bash
+vim reqiurements.txt
+```
+
+在末尾添加
+
+```
+#reqiurements.txt
+...
+pyrsistent==0.14.0
+urllib3==1.25.11
+greenlet==0.4.16
+banal==0.4.2
+```
+
+> 不添加 `urllib3==1.25.11` 会导致
+> `ERROR: botocore 1.12.253 has requirement urllib3<1.26,>=1.20; python_version == “2.7”, but you’ll have urllib3 1.26.4 which is incompatible.`
+> 不添加 `pyrsistent==0.14.0` 会导致
+> `ERROR: Package ‘pyrsistent’ requires a different Python: 2.7.18 not in ‘>=3.5’`
+> 不添加 `banal==0.4.2` 会导致
+> CTFd容器无法启动，在 docker logs 中会提示：
+> `def is_sequence(obj: Any) -> bool syntax error:`
+
+### 三、CTFd平台启动与配置
+
+#### 1. 构建并启动镜像
+
+**在进行这一步之前，请确认服务器的时间正确，否则可能导致CTFd平台时间出错，容器连接超时等问题。**
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+#### 2. CTFd-Whale配置
+
+进入 CTFd 平台之后，在 admin 页面选择 `Plugins-CTFd Whale`
+
+![SSSCTF%E5%B9%B3%E5%8F%B0%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97%20242f0b64f6124701a0f159d6d7366d79/IMG_0436.jpg](../assets/2021-05-28-CTFd/IMG_0436.jpg)
+
+## 0x02 CTFd动态容器题目部署指南
+
+![SSSCTF%E5%B9%B3%E5%8F%B0%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97%20242f0b64f6124701a0f159d6d7366d79/IMG_0434.jpg](../assets/2021-05-28-CTFd/IMG_0434.jpg)
+
+填写完成后进入题目页面，修改 State 为 Visible，点击 Update 即可发布题目。
+
+## 0x03 CTFd动态容器题目贡献指南
+
+### 一、Pwn题
+
+0、到 [https://hub.docker.com](https://hub.docker.com/) 申请一个账户，并在自己的终端中登录。
+
+```bash
+docker login
+```
+
+1、创建一个新目录。
+
+```bash
+mkdir pwntest
+cd pwntest
+```
+
+2、进入该目录，将可执行文件拷贝到该目录下，命名为 pwn。创建一个 Dockerfile 文件，内容如下：
+
+```docker
+FROM upw1nd/pwn_base_16_new
+COPY pwn /pwn/pwn
+```
+
+upw1nd/pwn_base_16_new 代表 Ubuntu 16.04，libc 版本 `Ubuntu GLIBC 2.23-0ubuntu11.3`
+upw1nd/pwn_base_18_new 代表 Ubuntu 18.04，libc 版本 `Ubuntu GLIBC 2.27-3ubuntu1.4`
+upw1nd/pwn_base_20_new 代表 Ubuntu 20.04，libc 版本 `Ubuntu GLIBC 2.31-0ubuntu9.2`
+
+3、构建。
+
+```bash
+docker build -t <你在dockerhub的用户名/你的镜像名> ./
+```
+
+例如：
+
+```
+docker build -t upw1nd/testyournc ./
+```
+
+4、推送。
+
+```bash
+docker push upw1nd/testyournc
+```
+
+### 二、Web题
+
+打好镜像后填写题目描述以及镜像名。
+
+动态 FLAG命令参考如下：
+
+```
+echo $FLAG > /home/$USER/flag && export FLAG=not_flag && FLAG=not_flag
+```
