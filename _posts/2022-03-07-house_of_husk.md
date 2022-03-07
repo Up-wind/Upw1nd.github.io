@@ -1,6 +1,6 @@
 ---
 title: House of Husk
-date: 2022-02-22
+date: 2022-03-07
 categories:
 - Pwn
 tags: [heap]
@@ -40,7 +40,7 @@ int main()
 
 执行完 free 后，tcachebin 被填满，最后一次 free 的 chunk 进入 fastbin。
 
-![image-20220305145854147](../assets/2022-02-22-house_of_husk/image-20220305145854147.png)
+![image-20220305145854147](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220305145854147.png)
 
 查看 main_arena 可以看到，0x30 和 0x40 的 fastbin chunk 指针分别在 main_arena+0x18 和 main_arena+0x20。
 
@@ -88,11 +88,11 @@ upwind@ubuntu-18:/mnt/hgfs/share/house_of_husk$ ./demo
 
 offset2size 的公式可以根据前面的推导来算，传入的参数是要覆盖的地址相对 main_arena 的偏移。
 
-![image-20220306152001223](../assets/2022-02-22-house_of_husk/image-20220306152001223.png)
+![image-20220306152001223](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220306152001223.png)
 
 `free(a[0])` 之后 a[0] 进入 unsorted bin，修改 a[0] 的 bk 指针为 `global_max_fast - 0x10` 的位置，使下一次 malloc 相同大小时，fd 指针正好覆盖 `global_max_fast`。
 
-![image-20220306152101005](../assets/2022-02-22-house_of_husk/image-20220306152101005.png)
+![image-20220306152101005](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220306152101005.png)
 
 接下来 `free(a[1])`，对应的位置就被填充了 a[1] 的地址。
 
@@ -316,7 +316,7 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 
 值得注意的是，题目给出的 libc 并没有两个 printf table 的符号，我们需要到 dbg 版本的 libc 文件中查询，这里推荐一个能查询 debug 版本 libc 的网站——[libc database search](https://publicki.top/libc/)
 
-![image-20220307163518357](../assets/2022-02-22-house_of_husk/image-20220307163518357.png)
+![image-20220307163518357](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220307163518357.png)
 
 点击 All symbols，在网页中查询符号偏移。
 
