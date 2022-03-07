@@ -314,9 +314,9 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 
 所以攻击的逻辑很简单，malloc 的两个块正好对应 `__printf_arginfo_table` 和 `__printf_function_table`，unsorted bin 用来 leak libc 和覆盖 `global_max_fast`，edit 时填充 one_gadget，最后 printf 触发。
 
-值得注意的是，题目给出的 libc 并没有两个 printf table 的符号，我们需要到 dbg 版本的 libc 文件中查询，这里推荐一个能查询 debug 版本 libc 的网站——[libc database search](https://publicki.top/libc/)
+值得注意的是，题目给出的 libc 并没有两个 printf table 的符号，我们需要到 debug 版本的 libc 文件中查询，这里推荐一个能查询 debug 版本 libc 的网站——[libc database search](https://publicki.top/libc/)
 
-![image-20220307163518357](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220307163518357.png)
+![image-20220307165100609](https://up-wind.github.io/assets/2022-02-22-house_of_husk/image-20220307165100609.png)
 
 点击 All symbols，在网页中查询符号偏移。
 
