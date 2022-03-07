@@ -182,7 +182,7 @@ do_positional:
 - 填充 `__printf_function_table`。
 - 通过 `printf` 触发漏洞。
 
-这个漏洞（也可以说是特性）不会受 libc 版本的限制，只要有 global_max_fast 就能触发。
+这个漏洞（也可以说是特性）不会受 libc 版本的限制，只要有 fastbin 并且能进行 unsorted bin attack 就能触发。
 
 ### poc
 
