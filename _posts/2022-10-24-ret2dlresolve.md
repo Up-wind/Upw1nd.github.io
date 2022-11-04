@@ -894,10 +894,8 @@ struct link_map
 
 我们伪造的 link_map 只需要伪造 l_addr 和 l_info 数组中 `DT_SYMTAB`、`DT_STRTAB`、`DT_JMPREL` 的地址。其他任意填写
 
-##### 伪造 l_addr
-
 ```python
-    linkmap  = p64(offset & (2**64-1))              # 0x00 l_addr
+l_addr = libc.sym['system'] - libc.sym['write']
 ```
 
 ![image-20221105010613976](https://up-wind.github.io/assets/2022-10-24-ret2dlresolve/image-20221105010613976.png)
