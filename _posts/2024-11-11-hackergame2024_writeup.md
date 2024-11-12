@@ -10,7 +10,7 @@ description: 摸鱼玩了一周 Hackergame 2024，说是又找回打 CTF 的感�
 
 ## 解题一览
 
-![image-0](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-0.png)
+![image-0](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-0.png)
 
 其他没完全解决的题目还有：强大的正则表达式（Easy）、惜字如金 3.0（题目 A）、关灯（Easy）、零知识数独（数独高手）
 
@@ -18,7 +18,7 @@ description: 摸鱼玩了一周 Hackergame 2024，说是又找回打 CTF 的感�
 
 ## 签到
 
-![image-1](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-1.png)
+![image-1](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-1.png)
 
 直接点启动发现链接是 `http://202.38.93.141:12024/?pass=false`
 
@@ -32,7 +32,7 @@ description: 摸鱼玩了一周 Hackergame 2024，说是又找回打 CTF 的感�
 
 ### Checkin Again & Again
 
-![image-2](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-2.png)
+![image-2](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-2.png)
 
 两个 flag，一个在 `env` 中，一个在隐藏文件 `.flag` 中
 
@@ -68,7 +68,7 @@ https://lug.ustc.edu.cn/news/2019/12/hackergame-2019/
 
 [论文原文](https://www.usenix.org/system/files/usenixsecurity24-ma-jinrui.pdf)中第 6 章的 336 combinations 可知答案为 `336`
 
-![image-3](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-3.png)
+![image-3](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-3.png)
 
 5. 10 月 18 日 Greg Kroah-Hartman 向 Linux 邮件列表提交的一个 patch 把大量开发者从 MAINTAINERS 文件中移除。这个 patch 被合并进 Linux mainline 的 commit id 是多少？**（5 分）**
 
@@ -98,17 +98,17 @@ https://token-counter.app/meta/llama-3
 
 随便找一个 stl 在线编辑网站，例如 http://www.tinkercad.com/
 
-![image-4](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-4.png)
+![image-4](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-4.png)
 
 `flag{Dr4W_Us!nG_fR3E_C4D!!w0W}`
 
 ## 每日论文太多了！
 
-![image-5](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-5.png)
+![image-5](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-5.png)
 
 搜索字符 “flag” 发现藏了 flag，在 Acrobat 中打开并编辑，删除遮挡可以看到 flag。
 
-![image-6](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-6.png)
+![image-6](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-6.png)
 
 `flag{h4PpY_hAck1ng_3veRyd4y}`
 
@@ -179,7 +179,7 @@ print(json_data)
 print(response.json())
 ```
 
-![image-7](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-7.png)
+![image-7](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-7.png)
 
 `flag{!-4M-7he-H@CKEr-KInG-of-cOmPAr!n9-nUM6ER$-2oz4}`
 
@@ -187,53 +187,53 @@ print(response.json())
 
 ### LEO_CHAN?
 
-![klkq.jpg](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/klkq.jpg)
+![klkq.jpg](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/klkq.jpg)
 
-![image-8](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-8.png)
+![image-8](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-8.png)
 
 **问题 1：**
 
 在百度地图中搜索“科里科气科创驿站”，可以找到一个中科大附近的地址，然后中校区和东校区的几个门排列组合一下，得到答案 `东校区西门`
 
-![image-9](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-9.png)
+![image-9](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-9.png)
 
 **问题 2：**
 
 直接搜索“科大 ACG 音乐会”，得到答案 `20240519`
 
-![image-10](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-10.png)
+![image-10](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-10.png)
 
 `flag{5UB5CR1B3_T0_L30_CH4N_0N_B1L1B1L1_PLZ_1409172bfc}`
 
 ### FULL_RECALL
 
-![image01.jpg](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image01.jpg)
+![image01.jpg](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image01.jpg)
 
 一开始到处搜“彩虹标线”没找对，后来注意到垃圾桶上的字“**六安园林**”，搜索“**六安 彩虹标线**”得到答案 `中央公园`
 
 > https://www.sohu.com/a/498987928_121123834
 
-![image04.jpg](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image04.jpg)
+![image04.jpg](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image04.jpg)
 
 yandex 识图，很容易找到答案 `坛子岭`
 
-![image-11](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-11.png)
+![image-11](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-11.png)
 
 `flag{D3T41LS_M4TT3R_1F_R3V3RS3_S34RCH_1S_1MP0SS1BL3_26229de482}`
 
 ### OMINOUS_BELL
 
-![image06.jpg](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image06.jpg)
+![image06.jpg](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image06.jpg)
 
 题目给出提示”四编组动车“，Google 搜索第一个就是 `CRH6F-A`，颜色也正好对上。
 
-![image-12](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-12.png)
+![image-12](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-12.png)
 
 查看怀密号沿线的动车所可以找到**北京北动车所**，在百度地图上看卫星图，与图片中的红方顶建筑吻合，可以找到最近的 `积水潭医院`。
 
-![image-13](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-13.png)
+![image-13](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-13.png)
 
-![image-14](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-14.png)
+![image-14](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-14.png)
 
 `flag{1_C4NT_C0NT1NU3_TH3_5T0RY_4NYM0R3_50M30N3_PLZ_H3LP_316d314e43}`
 
@@ -400,7 +400,7 @@ for link in links:
 
 ### 窥视未知
 
-![image-15](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-15.png)
+![image-15](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-15.png)
 
 execute_query 是一个很明显的 sql 注入漏洞，结合前面的 `shown = true`，这里注入应该找 `shown = false`。
 
@@ -458,7 +458,7 @@ print(link_response.text)
 
 在 vscode 中根据报错和对齐即可恢复原来的文件。
 
-![image-16](/Users/upwind/Documents/GitHub/up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-16.png)
+![image-16](https://up-wind.github.io/assets/2024-11-11-hackergame2024_writeup/image-16.png)
 
 ```python
 #!/usr/bin/python3                                                              
