@@ -3,10 +3,9 @@ title: Hackergame 2024 WriteUp
 date: 2024-11-11
 categories:
 - WriteUp
+tags: [hackergame]
 description: 摸鱼玩了一周 Hackergame 2024，说是又找回打 CTF 的感觉，但是做出来的其实都是简单题。写一写 wp 记录一下吧，有时间再把几道二进制的题目复现一下。
 ---
-
-
 
 ## 解题一览
 
@@ -52,7 +51,7 @@ description: 摸鱼玩了一周 Hackergame 2024，说是又找回打 CTF 的感�
 
 提示：是一个非负整数。
 
-https://lug.ustc.edu.cn/news/2019/12/hackergame-2019/
+[中国科学技术大学第六届信息安全大赛圆满结束 - LUG @ USTC](https://lug.ustc.edu.cn/news/2019/12/hackergame-2019/)
 
 答案是 `2682`
 
@@ -82,7 +81,7 @@ https://lug.ustc.edu.cn/news/2019/12/hackergame-2019/
 
 提示：首次打开本页时的 HTML 源代码，答案是一个非负整数
 
-https://token-counter.app/meta/llama-3
+随便找一个 token 计算器网站，例如：[Llama 3 | Token Counter](https://token-counter.app/meta/llama-3)
 
 把 HTML 代码复制到 token 计算器中，再 +-1 调整，得到答案 `1833`
 
@@ -338,7 +337,7 @@ ${____:15:1}${__:3:1}${____:14:1} ${__: -8: 1}${____:17:4}
 
 ## Node.js is Web Scale
 
-> https://www.freebuf.com/articles/web/361333.html
+> [浅析CTF中的Node.js原型链污染 - FreeBuf](https://www.freebuf.com/articles/web/361333.html)
 
 题目中的 kv 存储到一个 Object 中，刚好执行命令也是使用 Object 对象执行。
 
